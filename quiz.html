@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Einfaches Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .quiz {
+            background: white;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        #quizQuestion {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: #d32f2f;
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 20px;
+            font-size: 0.95em;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
+            .quiz {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            #quizQuestion {
+                font-size: 1.1em;
+            }
+
+            input,
+            button {
+                padding: 14px;
+                font-size: 16px;
+                /* Prevents zoom on iOS */
+            }
+        }
+
+        @media (max-width: 400px) {
+            .quiz {
+                padding: 12px;
+            }
+
+            #quizQuestion {
+                font-size: 1em;
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+            }
+
+            .quiz {
+                margin: 20px auto;
+            }
+
+            img {
+                max-height: 200px;
+                object-fit: contain;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="quiz">
+        <img id="quizImage" src="" alt="Quiz Bild" />
+        <p id="quizQuestion"></p>
+        <input id="answerInput" type="text" placeholder="Antwort eingeben" />
+        <button onclick="submitAnswer()">Senden</button>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        // Quiz-Daten: jede "Seite" ist ein Objekt
+        const pages = {
+            start: {
+                image: "frage1.jpg",
+                question: "Was ist die Antwort auf alles?",
+                correctAnswer: "42",
+                next: "frage2"
+            },
+            frage2: {
+                image: "frage2.jpg",
+                question: "Wie heißt unsere Galaxie?",
+                correctAnswer: "milchstraße",
+                next: "ende"
+            },
+            ende: {
+                image: "ende.jpg",
+                question: "Glückwunsch! Quiz beendet.",
+                correctAnswer: null,
+                next: null
+            }
+        };
+
+        let currentPage = "start";
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById("quizImage").src = page.image;
+            document.getElementById("quizQuestion").innerText = page.question;
+            document.getElementById("answerInput").value = "";
+            document.getElementById("error").innerText = "";
+
+            // Eingabe ausblenden, wenn keine Antwort mehr nötig ist
+            const input = document.getElementById("answerInput");
+            const button = document.querySelector("button");
+            if (page.correctAnswer === null) {
+                input.style.display = "none";
+                button.style.display = "none";
+            } else {
+                input.style.display = "block";
+                button.style.display = "block";
+            }
+        }
+
+        function submitAnswer() {
+            const page = pages[currentPage];
+            const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+
+            // Check if there's a correct answer to compare
+            if (!page.correctAnswer) {
+                return;
+            }
+
+            // Clear previous error
+            document.getElementById("error").innerText = "";
+
+            if (userAnswer === page.correctAnswer.toLowerCase()) {
+                // Move to next page if it exists
+                if (page.next) {
+                    currentPage = page.next;
+                    renderPage();
+                }
+            } else {
+                // Show error message
+                const errorDiv = document.getElementById("error");
+                errorDiv.innerText = "Falsche Antwort. Bitte erneut versuchen.";
+                errorDiv.style.display = "block";
+            }
+        }
+
+        // Initiale Anzeige
+        renderPage();
+    </script>
+
+</body>
+
+</html>
