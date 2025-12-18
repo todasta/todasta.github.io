@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Einfaches Quiz</title>
+    <title>MKG-Handy-Hunde-Rallye 2025</title>
     <style>
         * {
             box-sizing: border-box;
@@ -147,12 +147,32 @@
     </div>
 
     <script>
+        // Liste mit verschiedenen Fehlermeldungen
+        const errorMessages = [
+            "Falsche Antwort. Bitte erneut versuchen.",
+            "Hmm, das war wohl nichts. Noch ein Versuch!",
+            "Leider falsch. Probier's nochmal!",
+            "Nope! Versuch es noch einmal.",
+            "Knapp daneben ist auch vorbei. Nochmal!",
+            "Das ist nicht richtig. Weiter versuchen!",
+            "Schade, falsch! Aber nicht aufgeben.",
+            "Nicht ganz... Neuer Versuch?",
+            "Oh nein, das stimmt nicht. Versuch's weiter!",
+            "Fast! Naja, nicht wirklich. Nochmal bitte."
+        ];
+
         // Quiz-Daten: jede "Seite" ist ein Objekt
         const pages = {
             start: {
-                image: "frage1.jpg",
-                question: "Was ist die Antwort auf alles?",
-                correctAnswer: "42",
+                image: "start.jpg",
+                question: "Herzlich Willkommen zur MKG-Nostalgie-Handy-Hunde-Rallye 2025! Für korrekte Rechtschreibung , wird keine Gewehr gegeben. ;-) Zum Starten bitte das Passwort eingeben:",
+                correctAnswer: "12345",
+                next: "info"
+            },
+            info: {
+                image: "info.jpg",
+                question: "Gehe jetzt da hin, wo das passiert ist!",
+                correctAnswer: null,
                 next: "frage2"
             },
             frage2: {
@@ -178,20 +198,37 @@
             document.getElementById("answerInput").value = "";
             document.getElementById("error").innerText = "";
 
-            // Eingabe ausblenden, wenn keine Antwort mehr nötig ist
             const input = document.getElementById("answerInput");
             const button = document.querySelector("button");
-            if (page.correctAnswer === null) {
+
+            // Unterscheidung nach Seitentyp:
+            if (page.correctAnswer === null && page.next === null) {
+                // Ende-Seite: alles ausblenden
                 input.style.display = "none";
                 button.style.display = "none";
+            } else if (page.correctAnswer === null && page.next !== null) {
+                // Informative Seite: nur Button "Weiter" anzeigen
+                input.style.display = "none";
+                button.style.display = "block";
+                button.innerText = "Weiter";
             } else {
+                // Quiz-Seite: Input und Button "Senden" anzeigen
                 input.style.display = "block";
                 button.style.display = "block";
+                button.innerText = "Senden";
             }
         }
 
         function submitAnswer() {
             const page = pages[currentPage];
+
+            // Informative Seite: direkt weiter zur nächsten Seite
+            if (page.correctAnswer === null && page.next !== null) {
+                currentPage = page.next;
+                renderPage();
+                return;
+            }
+
             const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
 
             // Check if there's a correct answer to compare
@@ -209,9 +246,10 @@
                     renderPage();
                 }
             } else {
-                // Show error message
+                // Show random error message
                 const errorDiv = document.getElementById("error");
-                errorDiv.innerText = "Falsche Antwort. Bitte erneut versuchen.";
+                const randomIndex = Math.floor(Math.random() * errorMessages.length);
+                errorDiv.innerText = errorMessages[randomIndex];
                 errorDiv.style.display = "block";
             }
         }
