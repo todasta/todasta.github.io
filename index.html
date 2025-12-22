@@ -166,9 +166,9 @@
         const pages = {
             start: {
                 image: "start.jpg",
-                question: "Herzlich Willkommen zur MKG-Nostalgie-Handy-Hunde-Rallye 2025! (Für korrekte Rechtschreibung , wird keine Gewehr gegeben. ;-)) Zum Starten bitte das Passwort eingeben:",
+                question: "Herzlich Willkommen zur MKG-Hunde-Rallye-App! Weitere Instruktionen und den Zugangscode erhältst Du am Veranstaltungstag. Viel Spaß! Bitte Zugangscode eingeben:",
                 correctAnswer: "12345",
-                next: null,
+                next: "start",
             },
             info: {
                 image: "info.jpg",
@@ -203,19 +203,26 @@
             const button = document.querySelector("button");
 
             // Unterscheidung nach Seitentyp:
-            if (page.correctAnswer === null && page.next === null) {
-                // Ende-Seite: alles ausblenden
-                input.style.display = "none";
-                button.style.display = "none";
+            if (page.next === null) {
+                // Keine nächste Seite: Button und Input deaktivieren
+                input.style.display = "block";
+                input.disabled = true;
+                button.style.display = "hidden";
+                button.disabled = true;
+                button.innerText = "Ende";
             } else if (page.correctAnswer === null && page.next !== null) {
-                // Informative Seite: nur Button "Weiter" anzeigen
-                input.style.display = "none";
+                // Informative Seite: nur Button "Weiter" anzeigen, Input deaktivieren
+                input.style.display = "block";
+                input.disabled = true;
                 button.style.display = "block";
+                button.disabled = false;
                 button.innerText = "Weiter";
             } else {
-                // Quiz-Seite: Input und Button "Senden" anzeigen
+                // Quiz-Seite: Input und Button "Senden" aktivieren
                 input.style.display = "block";
+                input.disabled = false;
                 button.style.display = "block";
+                button.disabled = false;
                 button.innerText = "Senden";
             }
         }
